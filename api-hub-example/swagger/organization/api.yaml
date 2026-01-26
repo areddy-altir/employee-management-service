@@ -1,0 +1,667 @@
+openapi: 3.0.1
+info:
+  title: Organization API
+  description: Organization API for Logix Flow
+  contact:
+    email: pkota@altir.co
+  version: 1.0.0
+servers:
+- url: http://10.40.1.223:8080/organization
+- url: http://localhost:8080/organization
+- url: https://dev.logixflow.info/organization
+security:
+- BearerAuth: []
+tags:
+- name: Employee
+- name: Organization
+paths:
+  /employee/{id}:
+    get:
+      tags:
+      - Employee
+      operationId: findByIdEmployee
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully retrieved employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: GET_BY_ID
+        type: Employee
+    delete:
+      tags:
+      - Employee
+      operationId: deleteEmployee
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully deleted boolean
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BooleanReadByIdResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: DELETE
+        type: Employee
+    patch:
+      tags:
+      - Employee
+      operationId: patchEmployee
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Employee request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: PATCH
+        type: Employee
+  /employee:
+    post:
+      tags:
+      - Employee
+      operationId: createEmployee
+      requestBody:
+        description: Employee request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+        required: true
+      responses:
+        "200":
+          description: Successfully created employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: POST
+        type: Employee
+  /organization/{id}:
+    get:
+      tags:
+      - Organization
+      operationId: findByIdOrganization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully retrieved organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: GET_BY_ID
+        type: Organization
+    delete:
+      tags:
+      - Organization
+      operationId: deleteOrganization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully deleted boolean
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BooleanReadByIdResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: DELETE
+        type: Organization
+    patch:
+      tags:
+      - Organization
+      operationId: patchOrganization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Organization request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organization"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: PATCH
+        type: Organization
+  /organization:
+    post:
+      tags:
+      - Organization
+      operationId: createOrganization
+      requestBody:
+        description: Organization request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organization"
+        required: true
+      responses:
+        "200":
+          description: Successfully created organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: POST
+        type: Organization
+  /internal/organization/db-sync:
+    post:
+      tags:
+      - Organization
+      operationId: syncOrganizationDatabases
+      responses:
+        "201":
+          description: Accepted
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    BaseAuditFields:
+      type: object
+      properties:
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        active:
+          type: boolean
+      description: Common base class with audit fields
+      discriminator:
+        propertyName: type
+      x-fn-jpa-entity:
+        custom-annotations: '@MappedSuperclass'
+    ErrorField:
+      type: object
+      properties:
+        objectName:
+          type: string
+        field:
+          type: string
+        message:
+          type: string
+      x-fn-base-dto-type: NO_OP
+    BooleanReadByIdResponse:
+      allOf:
+      - $ref: "#/components/schemas/ApiResponseBase"
+      - type: object
+        properties:
+          data:
+            type: boolean
+      x-fn-wrapper-field: data
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-fn-id: true
+          x-fn-jpa-property:
+            id-generator:
+              strategy: UUID
+            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
+        organization:
+          allOf:
+          - $ref: "#/components/schemas/Organization"
+          x-fn-jpa-property:
+            ref:
+              many-to-one:
+                fetch: lazy
+                cascade:
+                - PERSIST
+                - REFRESH
+                orphan-removal: false
+              join-column:
+                name: organization_id
+                nullable: false
+        user:
+          allOf:
+          - $ref: "#/components/schemas/User"
+          x-fn-jpa-property:
+            ref:
+              one-to-one:
+                fetch: lazy
+                cascade:
+                - PERSIST
+                - REFRESH
+                orphan-removal: false
+              join-column:
+                name: user_id
+                nullable: false
+      x-fn-jpa-entity:
+        name: employees
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-fn-id: true
+          x-fn-jpa-property:
+            id-generator:
+              strategy: UUID
+            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
+        name:
+          type: string
+        address:
+          type: string
+        country:
+          type: string
+        employees:
+          type: array
+          items:
+            $ref: "#/components/schemas/Employee"
+          x-fn-jpa-property:
+            ref:
+              one-to-many:
+                fetch: lazy
+                mapped-by: organization
+                cascade:
+                - ALL
+                orphan-removal: true
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
+      x-fn-jpa-entity:
+        name: organizations
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-fn-id: true
+          x-fn-jpa-property:
+            id-generator:
+              strategy: UUID
+            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        country:
+          type: string
+      x-fn-jpa-entity:
+        name: users
+    OrganizationResponse:
+      allOf:
+      - $ref: "#/components/schemas/ApiResponseBase"
+      - type: object
+        properties:
+          data:
+            $ref: "#/components/schemas/Organization"
+      x-fn-wrapper-field: data
+    EmployeeResponse:
+      allOf:
+      - $ref: "#/components/schemas/ApiResponseBase"
+      - type: object
+        properties:
+          data:
+            $ref: "#/components/schemas/Employee"
+      x-fn-wrapper-field: data
+    ApiResponseBase:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+      discriminator:
+        propertyName: type
+      x-fn-response-wrapper: data
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+        errorFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorField"
+      description: Common error response object
+      x-fn-base-dto-type: NO_OP
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
