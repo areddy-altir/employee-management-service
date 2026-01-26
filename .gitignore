@@ -1,10 +1,14 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+target
+out
+.mvn
+mvnw
+mvnw.cmd
 !**/src/main/**/target/
 !**/src/test/**/target/
+!target/generated-sources/archetype
+**/.DS_Store
+.directory
 
-### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -13,13 +17,11 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +31,4 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
 .vscode/

@@ -6,7 +6,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Altir parent -->
     <parent>
         <groupId>co.altir</groupId>
         <artifactId>fn-db-management</artifactId>
