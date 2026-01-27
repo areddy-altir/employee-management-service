@@ -30,7 +30,7 @@ public class EmployeeController implements EmployeeApi {
 
     @Override
     public ResponseEntity<EmployeeResponseDto> patchEmployee(UUID id, EmployeeDto employeeDto) {
-        return EmployeeApi.super.patchEmployee(id, employeeDto);
+        return ResponseEntity.ok(employeeService.patchEmployee(id, employeeDto));
     }
 
     @Override
