@@ -526,6 +526,9 @@ components:
             type: boolean
       x-fn-wrapper-field: data
     Employee:
+      required:
+      - organization
+      - user
       type: object
       properties:
         id:
@@ -564,9 +567,15 @@ components:
               join-column:
                 name: user_id
                 nullable: false
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: employees
     Organization:
+      required:
+      - address
+      - employees
+      - name
       type: object
       properties:
         id:
@@ -600,6 +609,10 @@ components:
       x-fn-jpa-entity:
         name: organizations
     User:
+      required:
+      - email
+      - name
+      - phone
       type: object
       properties:
         id:
@@ -620,6 +633,12 @@ components:
           type: string
         country:
           type: string
+        keycloakUserId:
+          type: string
+          description: Keycloak User ID - Links this user to a Keycloak identity This
+            is the "sub" claim from the JWT token
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: users
     OrganizationResponse:

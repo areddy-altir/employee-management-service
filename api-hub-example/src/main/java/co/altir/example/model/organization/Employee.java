@@ -2,6 +2,8 @@ package co.altir.example.model.organization;
 
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEntity;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslOneToOne;
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
+import co.altir.example.model.common.BaseAuditFields;
 import java.util.UUID;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -10,12 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 @DslJpaEntity("employees")
-public class Employee {
+public class Employee extends BaseAuditFields {
 
   private UUID id;
 
-  private Organization organization;
+  @DslRequired() private Organization organization;
 
   @DslOneToOne(joinColumnName = "user_id")
+  @DslRequired()
   private User user;
 }
