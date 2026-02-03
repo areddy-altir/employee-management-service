@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.UserResource;
@@ -18,26 +19,20 @@ public class KeycloakUserHelper {
 
   private final String serverUrl;
   private final String realm;
-  private final String adminRealm;
-  private final String adminUsername;
-  private final String adminPassword;
   private final String clientId;
+  private final String clientSecret;
 
   private volatile Keycloak keycloak;
 
   public KeycloakUserHelper(
       @Value("${keycloak.server-url}") String serverUrl,
       @Value("${keycloak.realm}") String realm,
-      @Value("${keycloak.admin.realm:master}") String adminRealm,
-      @Value("${keycloak.admin.username}") String adminUsername,
-      @Value("${keycloak.admin.password}") String adminPassword,
-      @Value("${keycloak.client-id:admin-cli}") String clientId) {
+      @Value("${keycloak.client-id}") String clientId,
+      @Value("${keycloak.client-secret}") String clientSecret) {
     this.serverUrl = serverUrl;
     this.realm = realm;
-    this.adminRealm = adminRealm;
-    this.adminUsername = adminUsername;
-    this.adminPassword = adminPassword;
     this.clientId = clientId;
+    this.clientSecret = clientSecret;
   }
 
   private Keycloak getKeycloak() {
@@ -47,10 +42,10 @@ public class KeycloakUserHelper {
           keycloak =
               KeycloakBuilder.builder()
                   .serverUrl(serverUrl)
-                  .realm(adminRealm)
-                  .username(adminUsername)
-                  .password(adminPassword)
+                  .realm(realm)
+                  .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                   .clientId(clientId)
+                  .clientSecret(clientSecret)
                   .build();
         }
       }
