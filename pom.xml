@@ -108,8 +108,6 @@
             <artifactId>fn-jpa-data-access</artifactId>
         </dependency>
 
-
-
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
