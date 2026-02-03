@@ -3,6 +3,7 @@ package co.altir.example.model.organization;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEntity;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import co.altir.example.model.common.Address;
+import co.altir.example.model.common.BaseAuditFields;
 import java.util.UUID;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -11,7 +12,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 @DslJpaEntity("users")
-public class User {
+public class User extends BaseAuditFields {
 
   private UUID id;
 

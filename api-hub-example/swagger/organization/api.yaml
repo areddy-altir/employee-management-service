@@ -567,6 +567,8 @@ components:
               join-column:
                 name: user_id
                 nullable: false
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: employees
     Organization:
@@ -633,6 +635,8 @@ components:
           - $ref: "#/components/schemas/Address"
           x-fn-jpa-property:
             embedded: true
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: users
     Address:

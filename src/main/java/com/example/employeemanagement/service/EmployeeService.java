@@ -1,13 +1,12 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.config.AuditHelper;
 import com.example.employeemanagement.config.KeycloakUserHelper;
+import com.example.employeemanagement.models.dto.AddressDto;
 import com.example.employeemanagement.models.dto.BooleanReadByIdResponseDto;
 import com.example.employeemanagement.models.dto.EmployeeDto;
 import com.example.employeemanagement.models.dto.EmployeeResponseDto;
 import com.example.employeemanagement.models.dto.UserDto;
 import jakarta.transaction.Transactional;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,27 +29,31 @@ public class EmployeeService extends EmployeeDto.Service {
           user.getEmail(),
           user.getName(),
           user.getPhone(),
-          user.getAddress(),
-          user.getCountry(),
+          formatAddressForKeycloak(user.getAddress()),
           tempPassword);
       log.info(
           "Temporary password for {} (share with user, they must change on first login): {}",
           user.getEmail(),
           tempPassword);
     }
-    Instant now = Instant.now();
-    String auditor = AuditHelper.getCurrentAuditor();
-    payload
-        .createdOn(now)
-        .updatedOn(now)
-        .createdBy(auditor)
-        .updatedBy(auditor)
-        .active(true);
     return super.createEmployee(payload);
   }
 
   private String generateTemporaryPassword() {
     return "Temp" + UUID.randomUUID().toString().replace("-", "").substring(0, 8) + "!";
+  }
+
+  private static String formatAddressForKeycloak(AddressDto address) {
+    if (address == null) return "";
+    StringBuilder sb = new StringBuilder();
+    if (address.getLine1() != null) sb.append(address.getLine1());
+    if (address.getLine2() != null && !address.getLine2().isBlank())
+      sb.append(", ").append(address.getLine2());
+    if (address.getCity() != null) sb.append(", ").append(address.getCity());
+    if (address.getState() != null) sb.append(", ").append(address.getState());
+    if (address.getZip() != null) sb.append(" ").append(address.getZip());
+    if (address.getCountry() != null) sb.append(", ").append(address.getCountry());
+    return sb.toString().replaceFirst("^, ", "");
   }
 
   @Override
@@ -60,17 +63,6 @@ public class EmployeeService extends EmployeeDto.Service {
     if (existing != null && existing.getData() != null && existing.getData().getUser() != null) {
       email = existing.getData().getUser().getEmail();
     }
-    Instant now = Instant.now();
-    String auditor = AuditHelper.getCurrentAuditor();
-    if (existing != null && existing.getData() != null) {
-      if (payload.getCreatedOn() == null && existing.getData().getCreatedOn() != null) {
-        payload.createdOn(existing.getData().getCreatedOn());
-      }
-      if (payload.getCreatedBy() == null && existing.getData().getCreatedBy() != null) {
-        payload.createdBy(existing.getData().getCreatedBy());
-      }
-    }
-    payload.updatedOn(now).updatedBy(auditor);
     EmployeeResponseDto result = super.patchEmployee(id, payload);
     if (email != null && payload.getUser() != null) {
       UserDto userPayload = payload.getUser();
@@ -78,8 +70,7 @@ public class EmployeeService extends EmployeeDto.Service {
           email,
           userPayload.getName(),
           userPayload.getPhone(),
-          userPayload.getAddress(),
-          userPayload.getCountry());
+          formatAddressForKeycloak(userPayload.getAddress()));
     }
     return result;
   }

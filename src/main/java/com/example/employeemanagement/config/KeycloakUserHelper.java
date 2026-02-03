@@ -41,18 +41,18 @@ public class KeycloakUserHelper {
   }
 
   public void createUserInKeycloak(String email, String name, String phone) {
-    createUserInKeycloak(email, name, phone, null, null, null);
+    createUserInKeycloak(email, name, phone, null, null);
   }
 
   /**
    * Creates user in Keycloak and sets a temporary password (forces change on first login).
+   * Address is a single string (e.g. full formatted address including country).
    */
   public void createUserInKeycloak(
       String email,
       String name,
       String phone,
       String address,
-      String country,
       String tempPassword) {
     UserRepresentation user = new UserRepresentation();
     user.setEnabled(true);
@@ -62,7 +62,6 @@ public class KeycloakUserHelper {
     user.setLastName("");
     user.singleAttribute("phone", phone != null ? phone : "");
     user.singleAttribute("address", address != null ? address : "");
-    user.singleAttribute("country", country != null ? country : "");
 
     keycloak.realm(realm).users().create(user);
 
@@ -81,11 +80,10 @@ public class KeycloakUserHelper {
   }
 
   public void updateUserInKeycloak(String email, String name, String phone) {
-    updateUserInKeycloak(email, name, phone, null, null);
+    updateUserInKeycloak(email, name, phone, null);
   }
 
-  public void updateUserInKeycloak(
-      String email, String name, String phone, String address, String country) {
+  public void updateUserInKeycloak(String email, String name, String phone, String address) {
     List<UserRepresentation> users =
         keycloak.realm(realm).users().search(email, 0, 1);
     if (users.isEmpty()) {
@@ -98,7 +96,6 @@ public class KeycloakUserHelper {
     user.setFirstName(name != null ? name : "");
     user.singleAttribute("phone", phone != null ? phone : "");
     user.singleAttribute("address", address != null ? address : "");
-    user.singleAttribute("country", country != null ? country : "");
     keycloak.realm(realm).users().get(keycloakUserId).update(user);
     log.info("Updated user in Keycloak: {}", email);
   }
