@@ -526,6 +526,9 @@ components:
             type: boolean
       x-fn-wrapper-field: data
     Employee:
+      required:
+      - organization
+      - user
       type: object
       properties:
         id:
@@ -564,9 +567,14 @@ components:
               join-column:
                 name: user_id
                 nullable: false
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: employees
     Organization:
+      required:
+      - address
+      - name
       type: object
       properties:
         id:
@@ -580,9 +588,10 @@ components:
         name:
           type: string
         address:
-          type: string
-        country:
-          type: string
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          x-fn-jpa-property:
+            json-type: json
         employees:
           type: array
           items:
@@ -600,6 +609,11 @@ components:
       x-fn-jpa-entity:
         name: organizations
     User:
+      required:
+      - address
+      - email
+      - name
+      - phone
       type: object
       properties:
         id:
@@ -617,11 +631,36 @@ components:
         phone:
           type: string
         address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          x-fn-jpa-property:
+            json-type: json
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
+      x-fn-jpa-entity:
+        name: users
+    Address:
+      required:
+      - city
+      - country
+      - line1
+      - state
+      - zip
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
           type: string
         country:
           type: string
-      x-fn-jpa-entity:
-        name: users
+      x-fn-base-dto-type: NO_OP
     OrganizationResponse:
       allOf:
       - $ref: "#/components/schemas/ApiResponseBase"
