@@ -1,5 +1,6 @@
 package com.example.employeemanagement.service;
 
+import com.example.employeemanagement.config.AuditHelper;
 import com.example.employeemanagement.config.KeycloakUserHelper;
 import com.example.employeemanagement.models.dto.AddressDto;
 import com.example.employeemanagement.models.dto.BooleanReadByIdResponseDto;
@@ -7,6 +8,7 @@ import com.example.employeemanagement.models.dto.EmployeeDto;
 import com.example.employeemanagement.models.dto.EmployeeResponseDto;
 import com.example.employeemanagement.models.dto.UserDto;
 import jakarta.transaction.Transactional;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,22 @@ public class EmployeeService extends EmployeeDto.Service {
           user.getEmail(),
           tempPassword);
     }
+    Instant now = Instant.now();
+    String auditor = AuditHelper.getCurrentAuditor();
+    payload
+        .createdOn(now)
+        .updatedOn(now)
+        .createdBy(auditor)
+        .updatedBy(auditor)
+        .active(true);
+    if (payload.getUser() != null) {
+      payload.getUser()
+          .createdOn(now)
+          .updatedOn(now)
+          .createdBy(auditor)
+          .updatedBy(auditor)
+          .active(true);
+    }
     return super.createEmployee(payload);
   }
 
@@ -62,6 +80,30 @@ public class EmployeeService extends EmployeeDto.Service {
     String email = null;
     if (existing != null && existing.getData() != null && existing.getData().getUser() != null) {
       email = existing.getData().getUser().getEmail();
+    }
+    Instant now = Instant.now();
+    String auditor = AuditHelper.getCurrentAuditor();
+    if (existing != null && existing.getData() != null) {
+      if (payload.getCreatedOn() == null && existing.getData().getCreatedOn() != null) {
+        payload.createdOn(existing.getData().getCreatedOn());
+      }
+      if (payload.getCreatedBy() == null && existing.getData().getCreatedBy() != null) {
+        payload.createdBy(existing.getData().getCreatedBy());
+      }
+      if (payload.getUser() != null && existing.getData().getUser() != null) {
+        UserDto existingUser = existing.getData().getUser();
+        UserDto payloadUser = payload.getUser();
+        if (payloadUser.getCreatedOn() == null && existingUser.getCreatedOn() != null) {
+          payloadUser.createdOn(existingUser.getCreatedOn());
+        }
+        if (payloadUser.getCreatedBy() == null && existingUser.getCreatedBy() != null) {
+          payloadUser.createdBy(existingUser.getCreatedBy());
+        }
+      }
+    }
+    payload.updatedOn(now).updatedBy(auditor);
+    if (payload.getUser() != null) {
+      payload.getUser().updatedOn(now).updatedBy(auditor);
     }
     EmployeeResponseDto result = super.patchEmployee(id, payload);
     if (email != null && payload.getUser() != null) {
