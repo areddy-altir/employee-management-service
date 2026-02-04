@@ -1,4 +1,4 @@
-package com.example.employeemanagement.config;
+package com.example.employeemanagement.keycloak;
 
 import jakarta.annotation.PostConstruct;
 import java.util.List;
@@ -40,28 +40,17 @@ public class KeycloakUserHelper {
             .build();
   }
 
-  public void createUserInKeycloak(String email, String name, String phone) {
-    createUserInKeycloak(email, name, phone, null, null);
-  }
-
   /**
-   * Creates user in Keycloak and sets a temporary password (forces change on first login).
-   * Address is a single string (e.g. full formatted address including country).
+   * Creates user in Keycloak with username, first name, last name, email only.
+   * Sets a temporary password (forces change on first login).
    */
-  public void createUserInKeycloak(
-      String email,
-      String name,
-      String phone,
-      String address,
-      String tempPassword) {
+  public void createUserInKeycloak(String email, String name, String tempPassword) {
     UserRepresentation user = new UserRepresentation();
     user.setEnabled(true);
     user.setUsername(email);
     user.setEmail(email);
     user.setFirstName(name != null ? name : "");
     user.setLastName("");
-    user.singleAttribute("phone", phone != null ? phone : "");
-    user.singleAttribute("address", address != null ? address : "");
 
     keycloak.realm(realm).users().create(user);
 
@@ -79,11 +68,10 @@ public class KeycloakUserHelper {
     log.info("Created user in Keycloak: {}", email);
   }
 
-  public void updateUserInKeycloak(String email, String name, String phone) {
-    updateUserInKeycloak(email, name, phone, null);
-  }
-
-  public void updateUserInKeycloak(String email, String name, String phone, String address) {
+  /**
+   * Updates user in Keycloak: first name, last name only (username/email from lookup).
+   */
+  public void updateUserInKeycloak(String email, String name) {
     List<UserRepresentation> users =
         keycloak.realm(realm).users().search(email, 0, 1);
     if (users.isEmpty()) {
@@ -94,8 +82,7 @@ public class KeycloakUserHelper {
     UserRepresentation user =
         keycloak.realm(realm).users().get(keycloakUserId).toRepresentation();
     user.setFirstName(name != null ? name : "");
-    user.singleAttribute("phone", phone != null ? phone : "");
-    user.singleAttribute("address", address != null ? address : "");
+    user.setLastName("");
     keycloak.realm(realm).users().get(keycloakUserId).update(user);
     log.info("Updated user in Keycloak: {}", email);
   }

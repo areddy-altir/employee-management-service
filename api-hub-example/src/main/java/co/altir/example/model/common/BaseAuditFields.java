@@ -1,5 +1,8 @@
 package co.altir.example.model.common;
 
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslCreatedDate;
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslLastModifiedDate;
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslReadOnly;
 import java.time.OffsetDateTime;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -10,13 +13,13 @@ import lombok.experimental.Accessors;
 @Data
 public class BaseAuditFields {
 
-  private OffsetDateTime createdOn;
+  @DslCreatedDate private OffsetDateTime createdOn;
 
-  private OffsetDateTime updatedOn;
+  @DslLastModifiedDate private OffsetDateTime updatedOn;
 
-  private String createdBy;
+  @DslReadOnly private String createdBy;
 
-  private String updatedBy;
+  @DslReadOnly private String updatedBy;
 
   private Boolean active;
 }

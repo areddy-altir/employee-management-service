@@ -4,6 +4,7 @@ import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEnti
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import co.altir.example.model.common.Address;
 import co.altir.example.model.common.BaseAuditFields;
+import jakarta.persistence.Column;
 import java.util.UUID;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -18,7 +19,9 @@ public class User extends BaseAuditFields {
 
   @DslRequired() private String name;
 
-  @DslRequired() private String email;
+  @Column(unique = true)
+  @DslRequired()
+  private String email;
 
   @DslRequired() private String phone;
 

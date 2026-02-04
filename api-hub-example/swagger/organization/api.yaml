@@ -493,13 +493,17 @@ components:
         createdOn:
           type: string
           format: date-time
+          x-fn-created-date: true
         updatedOn:
           type: string
           format: date-time
+          x-fn-last-modified-date: true
         createdBy:
           type: string
+          readOnly: true
         updatedBy:
           type: string
+          readOnly: true
         active:
           type: boolean
       description: Common base class with audit fields
@@ -628,6 +632,8 @@ components:
           type: string
         email:
           type: string
+          x-fn-jpa-property:
+            custom-annotations: '@jakarta.persistence.Column(unique = true)'
         phone:
           type: string
         address:
