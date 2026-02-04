@@ -1,34 +1,29 @@
-package com.example.employeemanagement.keycloak;
+package com.example.employeemanagement.integration.keycloak;
 
 import com.example.employeemanagement.models.dto.UserDto;
+import com.example.employeemanagement.util.StringUtils;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class KeycloakUserSyncService {
 
-  private final KeycloakUserHelper keycloakUserHelper;
+  private final KeycloakAdminClient keycloakAdminClient;
 
   /**
-   * Syncs user to Keycloak on employee create: creates user with temporary password and logs it
-   * for the admin to share.
+   * Syncs user to Keycloak on employee create: creates user with temporary password
+   * (forces change on first login).
    */
   public void syncUserOnCreate(UserDto user) {
-    if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
+    if (!hasValidEmail(user)) {
       return;
     }
     String tempPassword = generateTemporaryPassword();
-    keycloakUserHelper.createUserInKeycloak(
+    keycloakAdminClient.createUserInKeycloak(
         user.getEmail(),
         user.getName(),
-        tempPassword);
-    log.info(
-        "Temporary password for {} (share with user, they must change on first login): {}",
-        user.getEmail(),
         tempPassword);
   }
 
@@ -36,20 +31,24 @@ public class KeycloakUserSyncService {
    * Syncs user to Keycloak on employee update (name only; email is the lookup key).
    */
   public void syncUserOnUpdate(UserDto user) {
-    if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
+    if (!hasValidEmail(user)) {
       return;
     }
-    keycloakUserHelper.updateUserInKeycloak(user.getEmail(), user.getName());
+    keycloakAdminClient.updateUserInKeycloak(user.getEmail(), user.getName());
   }
 
   /**
    * Removes user from Keycloak on employee delete.
    */
   public void syncUserOnDelete(String email) {
-    if (email == null || email.isBlank()) {
+    if (StringUtils.isBlank(email)) {
       return;
     }
-    keycloakUserHelper.deleteUserInKeycloak(email);
+    keycloakAdminClient.deleteUserInKeycloak(email);
+  }
+
+  private static boolean hasValidEmail(UserDto user) {
+    return user != null && !StringUtils.isBlank(user.getEmail());
   }
 
   private static String generateTemporaryPassword() {

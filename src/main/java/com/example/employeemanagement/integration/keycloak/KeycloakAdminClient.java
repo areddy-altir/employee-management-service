@@ -1,18 +1,19 @@
-package com.example.employeemanagement.keycloak;
+package com.example.employeemanagement.integration.keycloak;
 
 import jakarta.annotation.PostConstruct;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
-public class KeycloakUserHelper {
+public class KeycloakAdminClient {
 
   @Value("${keycloak.auth-server-url}")
   private String serverUrl;
@@ -27,6 +28,7 @@ public class KeycloakUserHelper {
   private String clientSecret;
 
   private Keycloak keycloak;
+  private UsersResource usersResource;
 
   @PostConstruct
   public void init() {
@@ -38,6 +40,7 @@ public class KeycloakUserHelper {
             .clientSecret(clientSecret)
             .grantType("client_credentials")
             .build();
+    usersResource = keycloak.realm(realm).users();
   }
 
   /**
@@ -49,53 +52,49 @@ public class KeycloakUserHelper {
     user.setEnabled(true);
     user.setUsername(email);
     user.setEmail(email);
-    user.setFirstName(name != null ? name : "");
+    user.setFirstName(nullToEmpty(name));
     user.setLastName("");
 
-    keycloak.realm(realm).users().create(user);
+    usersResource.create(user);
 
     if (tempPassword != null && !tempPassword.isBlank()) {
-      List<UserRepresentation> users = keycloak.realm(realm).users().search(email, 0, 1);
-      if (!users.isEmpty()) {
-        String userId = users.get(0).getId();
+      findUserIdByEmail(email).ifPresent(userId -> {
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType("password");
         credential.setValue(tempPassword);
         credential.setTemporary(true);
-        keycloak.realm(realm).users().get(userId).resetPassword(credential);
-      }
+        usersResource.get(userId).resetPassword(credential);
+      });
     }
-    log.info("Created user in Keycloak: {}", email);
   }
 
   /**
    * Updates user in Keycloak: first name, last name only (username/email from lookup).
    */
   public void updateUserInKeycloak(String email, String name) {
-    List<UserRepresentation> users =
-        keycloak.realm(realm).users().search(email, 0, 1);
-    if (users.isEmpty()) {
-      log.warn("User not found in Keycloak for update: {}", email);
-      return;
-    }
-    String keycloakUserId = users.get(0).getId();
-    UserRepresentation user =
-        keycloak.realm(realm).users().get(keycloakUserId).toRepresentation();
-    user.setFirstName(name != null ? name : "");
-    user.setLastName("");
-    keycloak.realm(realm).users().get(keycloakUserId).update(user);
-    log.info("Updated user in Keycloak: {}", email);
+    findUserIdByEmail(email).ifPresentOrElse(
+        userId -> {
+          UserResource userResource = usersResource.get(userId);
+          UserRepresentation user = userResource.toRepresentation();
+          user.setFirstName(nullToEmpty(name));
+          user.setLastName("");
+          userResource.update(user);
+        },
+        () -> {});
   }
 
   public void deleteUserInKeycloak(String email) {
-    List<UserRepresentation> users =
-        keycloak.realm(realm).users().search(email, 0, 1);
-    if (users.isEmpty()) {
-      log.warn("User not found in Keycloak for delete: {}", email);
-      return;
-    }
-    String keycloakUserId = users.get(0).getId();
-    keycloak.realm(realm).users().get(keycloakUserId).remove();
-    log.info("Deleted user from Keycloak: {}", email);
+    findUserIdByEmail(email).ifPresentOrElse(
+        userId -> usersResource.get(userId).remove(),
+        () -> {});
+  }
+
+  private Optional<String> findUserIdByEmail(String email) {
+    List<UserRepresentation> users = usersResource.search(email, 0, 1);
+    return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0).getId());
+  }
+
+  private static String nullToEmpty(String s) {
+    return s == null ? "" : s;
   }
 }

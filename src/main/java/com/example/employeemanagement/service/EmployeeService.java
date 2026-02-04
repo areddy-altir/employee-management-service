@@ -1,7 +1,7 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.config.AuditHelper;
-import com.example.employeemanagement.keycloak.KeycloakUserSyncService;
+import com.example.employeemanagement.util.AuditPayloadHelper;
+import com.example.employeemanagement.integration.keycloak.KeycloakUserSyncService;
 import com.example.employeemanagement.models.dto.BooleanReadByIdResponseDto;
 import com.example.employeemanagement.models.dto.EmployeeDto;
 import com.example.employeemanagement.models.dto.EmployeeResponseDto;
@@ -22,54 +22,43 @@ public class EmployeeService extends EmployeeDto.Service {
   @Override
   public EmployeeResponseDto createEmployee(EmployeeDto payload) {
     keycloakUserSyncService.syncUserOnCreate(payload.getUser());
-    String auditor = AuditHelper.getCurrentAuditor();
-    payload
-        .createdBy(auditor)
-        .updatedBy(auditor)
-        .active(true);
-    if (payload.getUser() != null) {
-      payload.getUser()
-          .createdBy(auditor)
-          .updatedBy(auditor)
-          .active(true);
-    }
+    applyCreateAuditToPayloadAndUser(payload);
     return super.createEmployee(payload);
   }
 
-    @Override
-    public EmployeeResponseDto patchEmployee(UUID id, EmployeeDto payload) {
-        // Set audit info
-        String auditor = AuditHelper.getCurrentAuditor();
-        payload.updatedBy(auditor);
-        // Track whether user data is part of this PATCH
-        boolean userUpdated = payload.getUser() != null;
-
-        if (userUpdated) {
-            payload.getUser().updatedBy(auditor);
-        }
-        EmployeeResponseDto result = super.patchEmployee(id, payload);
-        if (userUpdated) {
-            keycloakUserSyncService.syncUserOnUpdate(payload.getUser());
-        }
-        return result;
+  @Override
+  public EmployeeResponseDto patchEmployee(UUID id, EmployeeDto payload) {
+    applyUpdateAuditToPayloadAndUser(payload);
+    EmployeeResponseDto result = super.patchEmployee(id, payload);
+    if (payload.getUser() != null) {
+      keycloakUserSyncService.syncUserOnUpdate(payload.getUser());
     }
+    return result;
+  }
 
-    @Override
-    public BooleanReadByIdResponseDto deleteEmployee(UUID id) {
-        EmployeeResponseDto existing = findByIdEmployee(id);
-        String email = null;
+  @Override
+  public BooleanReadByIdResponseDto deleteEmployee(UUID id) {
+    EmployeeResponseDto existing = findByIdEmployee(id);
+    String email = getUserEmailFromEmployeeResponse(existing);
+    BooleanReadByIdResponseDto result = super.deleteEmployee(id);
+    keycloakUserSyncService.syncUserOnDelete(email);
+    return result;
+  }
 
-        if (existing != null
-                && existing.getData() != null
-                && existing.getData().getUser() != null) {
-            email = existing.getData().getUser().getEmail();
-        }
+  private static void applyCreateAuditToPayloadAndUser(EmployeeDto payload) {
+    AuditPayloadHelper.applyCreateAudit(payload);
+    AuditPayloadHelper.applyCreateAudit(payload.getUser());
+  }
 
-        BooleanReadByIdResponseDto result = super.deleteEmployee(id);
+  private static void applyUpdateAuditToPayloadAndUser(EmployeeDto payload) {
+    AuditPayloadHelper.applyUpdateAudit(payload);
+    AuditPayloadHelper.applyUpdateAudit(payload.getUser());
+  }
 
-        keycloakUserSyncService.syncUserOnDelete(email);
-
-        return result;
+  private static String getUserEmailFromEmployeeResponse(EmployeeResponseDto res) {
+    if (res == null || res.getData() == null || res.getData().getUser() == null) {
+      return null;
     }
-
+    return res.getData().getUser().getEmail();
+  }
 }

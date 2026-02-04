@@ -46,6 +46,7 @@
     <properties>
         <java.version>17</java.version>
         <spring.boot.version>3.2.2</spring.boot.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
         <co.altir.db.generate.input-spec>
 
             ${project.basedir}/api-hub-example/swagger/organization/api.yaml

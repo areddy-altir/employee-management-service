@@ -1,6 +1,6 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.config.AuditHelper;
+import com.example.employeemanagement.util.AuditPayloadHelper;
 import com.example.employeemanagement.models.dto.OrganizationDto;
 import com.example.employeemanagement.models.dto.OrganizationResponseDto;
 import jakarta.transaction.Transactional;
@@ -15,18 +15,13 @@ public class OrganizationService extends OrganizationDto.Service {
 
   @Override
   public OrganizationResponseDto createOrganization(OrganizationDto payload) {
-    String auditor = AuditHelper.getCurrentAuditor();
-    payload
-        .createdBy(auditor)
-        .updatedBy(auditor)
-        .active(true);
+    AuditPayloadHelper.applyCreateAudit(payload);
     return super.createOrganization(payload);
   }
 
   @Override
   public OrganizationResponseDto patchOrganization(UUID id, OrganizationDto payload) {
-    String auditor = AuditHelper.getCurrentAuditor();
-    payload.updatedBy(auditor);
+    AuditPayloadHelper.applyUpdateAudit(payload);
     return super.patchOrganization(id, payload);
   }
 }

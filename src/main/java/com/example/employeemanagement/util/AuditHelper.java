@@ -1,4 +1,4 @@
-package com.example.employeemanagement.config;
+package com.example.employeemanagement.util;
 
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,7 @@ public final class AuditHelper {
 
   private static String extractAuditorName(Jwt jwt) {
     String name = jwt.getClaimAsString("name");
-    if (name != null && !name.isBlank()) {
+    if (!StringUtils.isBlank(name)) {
       return name;
     }
     String preferredUsername = jwt.getClaimAsString("preferred_username");
