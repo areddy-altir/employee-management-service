@@ -1,0 +1,20 @@
+# H2 in-memory DB for tests
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+
+# Keycloak (test values - Keycloak not required for context load)
+keycloak:
+  auth-server-url: http://localhost:8180
+  realm: employee-management
+  client-id: employee-management-service
+  client-secret: test-secret
