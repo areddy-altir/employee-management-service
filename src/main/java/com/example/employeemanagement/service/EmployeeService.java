@@ -36,28 +36,40 @@ public class EmployeeService extends EmployeeDto.Service {
     return super.createEmployee(payload);
   }
 
-  @Override
-  public EmployeeResponseDto patchEmployee(UUID id, EmployeeDto payload) {
-    String auditor = AuditHelper.getCurrentAuditor();
-    payload.updatedBy(auditor);
-    if (payload.getUser() != null) {
-      payload.getUser().updatedBy(auditor);
-    }
-    EmployeeResponseDto result = super.patchEmployee(id, payload);
-    keycloakUserSyncService.syncUserOnUpdate(
-        result != null && result.getData() != null ? result.getData().getUser() : null);
-    return result;
-  }
+    @Override
+    public EmployeeResponseDto patchEmployee(UUID id, EmployeeDto payload) {
+        // Set audit info
+        String auditor = AuditHelper.getCurrentAuditor();
+        payload.updatedBy(auditor);
+        // Track whether user data is part of this PATCH
+        boolean userUpdated = payload.getUser() != null;
 
-  @Override
-  public BooleanReadByIdResponseDto deleteEmployee(UUID id) {
-    EmployeeResponseDto existing = findByIdEmployee(id);
-    String email = null;
-    if (existing != null && existing.getData() != null && existing.getData().getUser() != null) {
-      email = existing.getData().getUser().getEmail();
+        if (userUpdated) {
+            payload.getUser().updatedBy(auditor);
+        }
+        EmployeeResponseDto result = super.patchEmployee(id, payload);
+        if (userUpdated) {
+            keycloakUserSyncService.syncUserOnUpdate(payload.getUser());
+        }
+        return result;
     }
-    BooleanReadByIdResponseDto result = super.deleteEmployee(id);
-    keycloakUserSyncService.syncUserOnDelete(email);
-    return result;
-  }
+
+    @Override
+    public BooleanReadByIdResponseDto deleteEmployee(UUID id) {
+        EmployeeResponseDto existing = findByIdEmployee(id);
+        String email = null;
+
+        if (existing != null
+                && existing.getData() != null
+                && existing.getData().getUser() != null) {
+            email = existing.getData().getUser().getEmail();
+        }
+
+        BooleanReadByIdResponseDto result = super.deleteEmployee(id);
+
+        keycloakUserSyncService.syncUserOnDelete(email);
+
+        return result;
+    }
+
 }
