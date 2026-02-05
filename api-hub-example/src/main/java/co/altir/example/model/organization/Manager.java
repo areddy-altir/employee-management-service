@@ -1,26 +1,28 @@
 package co.altir.example.model.organization;
 
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEntity;
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslManyToOne;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslOneToOne;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import co.altir.example.model.common.BaseAuditFields;
+import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-// Source cell: Organization (organization)::A24
+// Source cell: Organization (organization)::A30
 @Accessors(chain = true)
 @Data
-@DslJpaEntity("employees")
-public class Employee extends BaseAuditFields {
+@DslJpaEntity("managers")
+public class Manager extends BaseAuditFields {
 
   private UUID id;
 
-  @DslRequired() private Organization organization;
+  @DslRequired() @DslManyToOne() private Organization organization;
 
-  @DslOneToOne(joinColumnName = "user_id")
   @DslRequired()
+  @DslOneToOne(joinColumnName = "user_id")
   private User user;
 
-  @DslRequired() private Manager manager;
+  @DslRequired() private List<Employee> employees;
 }
