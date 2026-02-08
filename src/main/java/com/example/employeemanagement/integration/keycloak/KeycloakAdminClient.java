@@ -1,46 +1,23 @@
 package com.example.employeemanagement.integration.keycloak;
 
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Keycloak Admin API client: create, update, delete users. Uses the UsersResource bean from KeycloakConfig.
+ */
 @Component
 public class KeycloakAdminClient {
 
-  @Value("${keycloak.auth-server-url}")
-  private String serverUrl;
+  private final UsersResource usersResource;
 
-  @Value("${keycloak.realm}")
-  private String realm;
-
-  @Value("${keycloak.client-id}")
-  private String clientId;
-
-  @Value("${keycloak.client-secret}")
-  private String clientSecret;
-
-  private Keycloak keycloak;
-  private UsersResource usersResource;
-
-  @PostConstruct
-  public void init() {
-    keycloak =
-        KeycloakBuilder.builder()
-            .serverUrl(serverUrl)
-            .realm(realm)
-            .clientId(clientId)
-            .clientSecret(clientSecret)
-            .grantType("client_credentials")
-            .build();
-    usersResource = keycloak.realm(realm).users();
+  public KeycloakAdminClient(UsersResource keycloakUsersResource) {
+    this.usersResource = keycloakUsersResource;
   }
 
   /**
