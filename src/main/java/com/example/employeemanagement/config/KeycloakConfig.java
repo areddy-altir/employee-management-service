@@ -1,4 +1,4 @@
-package com.example.employeemanagement.integration.keycloak;
+package com.example.employeemanagement.config;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
