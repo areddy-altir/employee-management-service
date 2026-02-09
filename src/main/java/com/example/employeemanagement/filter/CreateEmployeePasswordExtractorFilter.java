@@ -2,6 +2,8 @@ package com.example.employeemanagement.filter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,9 +11,6 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -76,8 +75,24 @@ public class CreateEmployeePasswordExtractorFilter extends OncePerRequestFilter 
     HttpServletRequest wrapped =
         new HttpServletRequestWrapper(request) {
           @Override
-          public InputStream getInputStream() {
-            return new ByteArrayInputStream(body);
+          public ServletInputStream getInputStream() {
+            final ByteArrayInputStream delegate = new ByteArrayInputStream(body);
+            return new ServletInputStream() {
+              @Override
+              public boolean isFinished() {
+                return delegate.available() == 0;
+              }
+              @Override
+              public boolean isReady() {
+                return true;
+              }
+              @Override
+              public void setReadListener(ReadListener readListener) {}
+              @Override
+              public int read() {
+                return delegate.read();
+              }
+            };
           }
         };
     filterChain.doFilter(wrapped, response);
