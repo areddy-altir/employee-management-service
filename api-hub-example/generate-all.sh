@@ -1,5 +1,4 @@
 #!/bin/bash
-
 data_model_src=`cat excel-data-model-source`
 dest_dir=`pwd`/src
 echo $dest_dir

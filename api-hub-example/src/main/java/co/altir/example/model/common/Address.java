@@ -1,12 +1,14 @@
 package co.altir.example.model.common;
 
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEmbeddable;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-// Source cell: Common Fragments (common)::A10
+// Source cell: Common Fragments (common)::A9
 @Accessors(chain = true)
 @Data
+@DslJpaEmbeddable
 public class Address {
 
   @DslRequired() private String line1;
