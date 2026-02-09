@@ -24,6 +24,7 @@ public final class AuditHelper {
         .orElse("system");
   }
 
+
   private static String extractAuditorName(Jwt jwt) {
     String name = jwt.getClaimAsString("name");
     if (!StringUtils.isBlank(name)) {
