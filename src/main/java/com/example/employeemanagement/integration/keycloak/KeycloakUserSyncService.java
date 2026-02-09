@@ -2,7 +2,6 @@ package com.example.employeemanagement.integration.keycloak;
 
 import com.example.employeemanagement.models.dto.UserDto;
 import com.example.employeemanagement.util.StringUtils;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +12,21 @@ public class KeycloakUserSyncService {
   private final KeycloakAdminClient keycloakAdminClient;
 
   /**
-   * Syncs user to Keycloak on employee create: creates user with temporary password
-   * (forces change on first login).
+   * Syncs user to Keycloak on employee create: creates user (no password), then sets password (non-temporary).
+   * Password is never logged or stored. Accept password only at create.
    */
-  public void syncUserOnCreate(UserDto user) {
+  public void syncUserOnCreate(UserDto user, String password) {
     if (!hasValidEmail(user)) {
       return;
     }
-    String tempPassword = generateTemporaryPassword();
-    keycloakAdminClient.createUserInKeycloak(
-        user.getEmail(),
-        user.getName(),
-        tempPassword);
+    if (password == null || password.isBlank()) {
+      return;
+    }
+
+    String userId = keycloakAdminClient.createUserInKeycloak(user.getEmail(), user.getName());
+    if (userId != null) {
+      keycloakAdminClient.setPassword(userId, password);
+    }
   }
 
   /**
@@ -49,9 +51,5 @@ public class KeycloakUserSyncService {
 
   private static boolean hasValidEmail(UserDto user) {
     return user != null && !StringUtils.isBlank(user.getEmail());
-  }
-
-  private static String generateTemporaryPassword() {
-    return "Temp" + UUID.randomUUID().toString().replace("-", "").substring(0, 8) + "!";
   }
 }

@@ -636,6 +636,10 @@ components:
             custom-annotations: '@jakarta.persistence.Column(unique = true)'
         phone:
           type: string
+        password:
+          type: string
+          writeOnly: true
+          description: Initial password for Keycloak (create only). Not stored. Never returned.
         address:
           allOf:
           - $ref: "#/components/schemas/Address"

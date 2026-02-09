@@ -21,10 +21,12 @@ public class KeycloakAdminClient {
   }
 
   /**
-   * Creates user in Keycloak with username, first name, last name, email only.
-   * Sets a temporary password (forces change on first login).
+   * Creates user in Keycloak with username, first name, last name, email only. No password.
+   * Caller must call {@link #setPassword(String, String)} to make the user loginable.
+   *
+   * @return Keycloak user id, or null if create failed
    */
-  public void createUserInKeycloak(String email, String name, String tempPassword) {
+  public String createUserInKeycloak(String email, String name) {
     UserRepresentation user = new UserRepresentation();
     user.setEnabled(true);
     user.setUsername(email);
@@ -33,16 +35,22 @@ public class KeycloakAdminClient {
     user.setLastName("");
 
     usersResource.create(user);
+    return findUserIdByEmail(email).orElse(null);
+  }
 
-    if (tempPassword != null && !tempPassword.isBlank()) {
-      findUserIdByEmail(email).ifPresent(userId -> {
-        CredentialRepresentation credential = new CredentialRepresentation();
-        credential.setType("password");
-        credential.setValue(tempPassword);
-        credential.setTemporary(true);
-        usersResource.get(userId).resetPassword(credential);
-      });
+  /**
+   * Sets password for a Keycloak user (non-temporary). User can login immediately.
+   * Never log or store the password.
+   */
+  public void setPassword(String userId, String password) {
+    if (userId == null || password == null || password.isBlank()) {
+      return;
     }
+    CredentialRepresentation credential = new CredentialRepresentation();
+    credential.setType("password");
+    credential.setValue(password);
+    credential.setTemporary(false);
+    usersResource.get(userId).resetPassword(credential);
   }
 
   /**

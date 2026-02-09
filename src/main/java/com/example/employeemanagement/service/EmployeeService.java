@@ -1,8 +1,11 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.util.AuditPayloadHelper;
+import com.example.employeemanagement.exception.BadRequestException;
+import com.example.employeemanagement.exception.ErrorCode;
 import com.example.employeemanagement.integration.keycloak.KeycloakUserSyncService;
 import com.example.employeemanagement.models.dto.BooleanReadByIdResponseDto;
+import com.example.employeemanagement.util.AuditPayloadHelper;
+import com.example.employeemanagement.util.PasswordValidator;
 import com.example.employeemanagement.models.dto.EmployeeDto;
 import com.example.employeemanagement.models.dto.EmployeeResponseDto;
 import jakarta.transaction.Transactional;
@@ -19,9 +22,14 @@ public class EmployeeService extends EmployeeDto.Service {
 
   private final KeycloakUserSyncService keycloakUserSyncService;
 
-  @Override
-  public EmployeeResponseDto createEmployee(EmployeeDto payload) {
-    keycloakUserSyncService.syncUserOnCreate(payload.getUser());
+  /** Overload used by controller; password is extracted from request by CreateEmployeePasswordExtractorFilter. */
+  public EmployeeResponseDto createEmployee(EmployeeDto payload, String password) {
+    if (payload.getUser() != null && password != null && !password.isBlank()) {
+      if (!PasswordValidator.isValid(password)) {
+        throw new BadRequestException(ErrorCode.EMP_400, "Password does not meet strength requirements");
+      }
+      keycloakUserSyncService.syncUserOnCreate(payload.getUser(), password);
+    }
     applyCreateAuditToPayloadAndUser(payload);
     return super.createEmployee(payload);
   }

@@ -1,5 +1,6 @@
 package com.example.employeemanagement.controller;
 
+import com.example.employeemanagement.filter.CreateEmployeePasswordExtractorFilter;
 import com.example.employeemanagement.models.dto.BooleanReadByIdResponseDto;
 import com.example.employeemanagement.models.dto.EmployeeDto;
 import com.example.employeemanagement.models.dto.EmployeeResponseDto;
@@ -8,6 +9,8 @@ import com.example.employeemanagement.utils.EmployeeApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
@@ -25,7 +28,12 @@ public class EmployeeController implements EmployeeApi {
 
     @Override
     public ResponseEntity<EmployeeResponseDto> createEmployee(EmployeeDto employeeDto) {
-        return ResponseEntity.ok(employeeService.createEmployee(employeeDto));
+        String password = null;
+        var attrs = RequestContextHolder.getRequestAttributes();
+        if (attrs instanceof ServletRequestAttributes servletAttrs) {
+            password = (String) servletAttrs.getRequest().getAttribute(CreateEmployeePasswordExtractorFilter.REQUEST_ATTR_PASSWORD);
+        }
+        return ResponseEntity.ok(employeeService.createEmployee(employeeDto, password));
     }
 
     @Override
