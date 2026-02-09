@@ -15,6 +15,19 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   @Bean
+  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
+    grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access");
+    grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
+    return jwtAuthenticationConverter;
+  }
+
+  @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
@@ -29,18 +42,5 @@ public class SecurityConfig {
                     jwt ->
                         jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
     return http.build();
-  }
-
-  @Bean
-  public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
-        new JwtGrantedAuthoritiesConverter();
-    grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access");
-    grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
-    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-    jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
-    return jwtAuthenticationConverter;
   }
 }

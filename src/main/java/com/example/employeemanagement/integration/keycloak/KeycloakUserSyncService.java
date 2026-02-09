@@ -11,6 +11,10 @@ public class KeycloakUserSyncService {
 
   private final KeycloakAdminClient keycloakAdminClient;
 
+  private static boolean hasValidEmail(UserDto user) {
+    return user != null && !StringUtils.isBlank(user.getEmail());
+  }
+
   /**
    * Syncs user to Keycloak on employee create: creates user (no password), then sets password (non-temporary).
    * Password is never logged or stored. Accept password only at create.
@@ -47,9 +51,5 @@ public class KeycloakUserSyncService {
       return;
     }
     keycloakAdminClient.deleteUserInKeycloak(email);
-  }
-
-  private static boolean hasValidEmail(UserDto user) {
-    return user != null && !StringUtils.isBlank(user.getEmail());
   }
 }

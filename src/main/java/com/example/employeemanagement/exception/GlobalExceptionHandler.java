@@ -50,6 +50,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
   }
 
+  private Map<String, Object> parseErrors(BindException ex) {
+    BindingResult result = ex.getBindingResult();
+    if (result.getAllErrors().isEmpty()) {
+      return Map.of();
+    }
+    Map<String, Object> errorMap = new HashMap<>(result.getFieldErrors().size());
+    for (FieldError fe : result.getFieldErrors()) {
+      addToMap(errorMap, fe.getField(), fe.getDefaultMessage());
+    }
+    if (result.hasGlobalErrors()) {
+      String global = result.getGlobalErrors().stream()
+          .map(DefaultMessageSourceResolvable::getDefaultMessage)
+          .map(m -> m != null ? m : "no error message available")
+          .collect(Collectors.joining(", "));
+      errorMap.put("globalError", global);
+    }
+    return errorMap;
+  }
+
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
     log.error("User is unauthorized. Reason: {}", ex.getMessage());
@@ -104,25 +123,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       addToMap(map, v.getPropertyPath().toString(), v.getMessage());
     }
     return ApiResponses.withMsgAndErrorsAsObject(HttpStatus.BAD_REQUEST, null, map);
-  }
-
-  private Map<String, Object> parseErrors(BindException ex) {
-    BindingResult result = ex.getBindingResult();
-    if (result.getAllErrors().isEmpty()) {
-      return Map.of();
-    }
-    Map<String, Object> errorMap = new HashMap<>(result.getFieldErrors().size());
-    for (FieldError fe : result.getFieldErrors()) {
-      addToMap(errorMap, fe.getField(), fe.getDefaultMessage());
-    }
-    if (result.hasGlobalErrors()) {
-      String global = result.getGlobalErrors().stream()
-          .map(DefaultMessageSourceResolvable::getDefaultMessage)
-          .map(m -> m != null ? m : "no error message available")
-          .collect(Collectors.joining(", "));
-      errorMap.put("globalError", global);
-    }
-    return errorMap;
   }
 
   @ExceptionHandler(ForbiddenException.class)

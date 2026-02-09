@@ -20,6 +20,15 @@ public class KeycloakAdminClient {
     this.usersResource = keycloakUsersResource;
   }
 
+  private static String nullToEmpty(String s) {
+    return s == null ? "" : s;
+  }
+
+  private Optional<String> findUserIdByEmail(String email) {
+    List<UserRepresentation> users = usersResource.search(email, 0, 1);
+    return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0).getId());
+  }
+
   /**
    * Creates user in Keycloak with username, first name, last name, email only. No password.
    * Caller must call {@link #setPassword(String, String)} to make the user loginable.
@@ -74,14 +83,5 @@ public class KeycloakAdminClient {
     findUserIdByEmail(email).ifPresentOrElse(
         userId -> usersResource.get(userId).remove(),
         () -> {});
-  }
-
-  private Optional<String> findUserIdByEmail(String email) {
-    List<UserRepresentation> users = usersResource.search(email, 0, 1);
-    return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0).getId());
-  }
-
-  private static String nullToEmpty(String s) {
-    return s == null ? "" : s;
   }
 }

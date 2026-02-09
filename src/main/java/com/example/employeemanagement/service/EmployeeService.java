@@ -22,6 +22,23 @@ public class EmployeeService extends EmployeeDto.Service {
 
   private final KeycloakUserSyncService keycloakUserSyncService;
 
+  private static String getUserEmailFromEmployeeResponse(EmployeeResponseDto res) {
+    if (res == null || res.getData() == null || res.getData().getUser() == null) {
+      return null;
+    }
+    return res.getData().getUser().getEmail();
+  }
+
+  private static void applyCreateAuditToPayloadAndUser(EmployeeDto payload) {
+    AuditPayloadHelper.applyCreateAudit(payload);
+    AuditPayloadHelper.applyCreateAudit(payload.getUser());
+  }
+
+  private static void applyUpdateAuditToPayloadAndUser(EmployeeDto payload) {
+    AuditPayloadHelper.applyUpdateAudit(payload);
+    AuditPayloadHelper.applyUpdateAudit(payload.getUser());
+  }
+
   /** Overload used by controller; password is extracted from request by CreateEmployeePasswordExtractorFilter. */
   public EmployeeResponseDto createEmployee(EmployeeDto payload, String password) {
     if (payload.getUser() != null && password != null && !password.isBlank()) {
@@ -51,22 +68,5 @@ public class EmployeeService extends EmployeeDto.Service {
     BooleanReadByIdResponseDto result = super.deleteEmployee(id);
     keycloakUserSyncService.syncUserOnDelete(email);
     return result;
-  }
-
-  private static void applyCreateAuditToPayloadAndUser(EmployeeDto payload) {
-    AuditPayloadHelper.applyCreateAudit(payload);
-    AuditPayloadHelper.applyCreateAudit(payload.getUser());
-  }
-
-  private static void applyUpdateAuditToPayloadAndUser(EmployeeDto payload) {
-    AuditPayloadHelper.applyUpdateAudit(payload);
-    AuditPayloadHelper.applyUpdateAudit(payload.getUser());
-  }
-
-  private static String getUserEmailFromEmployeeResponse(EmployeeResponseDto res) {
-    if (res == null || res.getData() == null || res.getData().getUser() == null) {
-      return null;
-    }
-    return res.getData().getUser().getEmail();
   }
 }
