@@ -29,7 +29,7 @@ public class KeycloakAdminClient {
     user.setUsername(email);
     user.setEmail(email);
     user.setFirstName(nullToEmpty(name));
-    user.setLastName("");
+    user.setLastName("NA");
 
     usersResource.create(user);
   }
@@ -43,7 +43,7 @@ public class KeycloakAdminClient {
           UserResource userResource = usersResource.get(userId);
           UserRepresentation user = userResource.toRepresentation();
           user.setFirstName(nullToEmpty(name));
-          user.setLastName("");
+          user.setLastName("NA");
           userResource.update(user);
         },
         () -> {});

@@ -12,7 +12,7 @@ public class KeycloakUserSyncService {
   private final KeycloakAdminClient keycloakAdminClient;
 
   /**
-   * Syncs user to Keycloak on employee create: creates user only (no password).
+   * Syncs user to Keycloak on employee create: creates user only (not password).
    * Set password via Keycloak Admin API (Step 2: get user id, Step 3: PUT reset-password with temporary: false).
    */
   public void syncUserOnCreate(UserDto user) {
