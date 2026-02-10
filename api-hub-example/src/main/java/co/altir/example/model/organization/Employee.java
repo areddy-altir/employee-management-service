@@ -21,6 +21,4 @@ public class Employee extends BaseAuditFields {
   @DslOneToOne(joinColumnName = "user_id")
   @DslRequired()
   private User user;
-
-  @DslRequired() private Manager manager;
 }
