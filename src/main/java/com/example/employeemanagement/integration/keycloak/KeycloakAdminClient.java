@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Component;
 
@@ -21,28 +20,18 @@ public class KeycloakAdminClient {
   }
 
   /**
-   * Creates user in Keycloak with username, first name, last name, email only.
-   * Sets a temporary password (forces change on first login).
+   * Creates user in Keycloak with username, first name, last name, email only. No password.
+   * Set password via Keycloak Admin API (PUT .../users/{userId}/reset-password) with temporary: false.
    */
-  public void createUserInKeycloak(String email, String name, String tempPassword) {
+  public void createUserInKeycloak(String email, String name) {
     UserRepresentation user = new UserRepresentation();
     user.setEnabled(true);
     user.setUsername(email);
     user.setEmail(email);
     user.setFirstName(nullToEmpty(name));
-    user.setLastName("");
+    user.setLastName("NA");
 
     usersResource.create(user);
-
-    if (tempPassword != null && !tempPassword.isBlank()) {
-      findUserIdByEmail(email).ifPresent(userId -> {
-        CredentialRepresentation credential = new CredentialRepresentation();
-        credential.setType("password");
-        credential.setValue(tempPassword);
-        credential.setTemporary(true);
-        usersResource.get(userId).resetPassword(credential);
-      });
-    }
   }
 
   /**
@@ -54,7 +43,7 @@ public class KeycloakAdminClient {
           UserResource userResource = usersResource.get(userId);
           UserRepresentation user = userResource.toRepresentation();
           user.setFirstName(nullToEmpty(name));
-          user.setLastName("");
+          user.setLastName("NA");
           userResource.update(user);
         },
         () -> {});
