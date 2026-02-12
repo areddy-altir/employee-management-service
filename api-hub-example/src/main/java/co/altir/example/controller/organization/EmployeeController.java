@@ -5,6 +5,7 @@ import co.altir.dbmanagement.dataaccess.openapidsl.endpoint.annotations.DslCrudE
 import co.altir.dbmanagement.dataaccess.openapidsl.endpoint.annotations.DslEndpoint;
 import co.altir.example.model.organization.Employee;
 import co.altir.example.model.organization.Manager;
+import java.util.List;
 import java.util.UUID;
 
 // Source cell: Organization (organization)::A24
@@ -23,4 +24,7 @@ public interface EmployeeController {
 
   @DslEndpoint(path = "/employees/{employeeId}/hierarchy", method = HttpMethod.GET)
   Object getEmployeeHierarchy(UUID employeeId);
+
+  @DslEndpoint(path = "/employees/{employeeId}/reportees", method = HttpMethod.GET)
+  List<Employee> getEmployeeReportees(UUID employeeId);
 }
