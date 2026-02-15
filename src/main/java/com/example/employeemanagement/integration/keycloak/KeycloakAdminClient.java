@@ -28,8 +28,14 @@ public class KeycloakAdminClient {
     user.setEnabled(true);
     user.setUsername(email);
     user.setEmail(email);
+<<<<<<< Updated upstream
     user.setFirstName(nullToEmpty(name));
     user.setLastName("NA");
+=======
+    NameParts parts = splitName(name);
+    user.setFirstName(parts.firstName());
+    user.setLastName(parts.lastName());
+>>>>>>> Stashed changes
 
     usersResource.create(user);
   }
@@ -42,8 +48,14 @@ public class KeycloakAdminClient {
         userId -> {
           UserResource userResource = usersResource.get(userId);
           UserRepresentation user = userResource.toRepresentation();
+<<<<<<< Updated upstream
           user.setFirstName(nullToEmpty(name));
           user.setLastName("NA");
+=======
+          NameParts parts = splitName(name);
+          user.setFirstName(parts.firstName());
+          user.setLastName(parts.lastName());
+>>>>>>> Stashed changes
           userResource.update(user);
         },
         () -> {});
@@ -63,4 +75,26 @@ public class KeycloakAdminClient {
   private static String nullToEmpty(String s) {
     return s == null ? "" : s;
   }
+
+  /**
+   * Splits a full name into first and last name.
+   *
+   * <p>If the name has multiple words, the last word becomes lastName and the preceding words become
+   * firstName. If it has a single word, it becomes firstName and lastName is empty.
+   */
+  private static NameParts splitName(String fullName) {
+    String normalized = nullToEmpty(fullName).trim().replaceAll("\\s+", " ");
+    if (normalized.isBlank()) {
+      return new NameParts("", "");
+    }
+    int lastSpace = normalized.lastIndexOf(' ');
+    if (lastSpace < 0) {
+      return new NameParts(normalized, "");
+    }
+    String first = normalized.substring(0, lastSpace).trim();
+    String last = normalized.substring(lastSpace + 1).trim();
+    return new NameParts(first, last);
+  }
+
+  private record NameParts(String firstName, String lastName) {}
 }

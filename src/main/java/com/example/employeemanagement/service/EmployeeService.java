@@ -44,7 +44,7 @@ public class EmployeeService extends EmployeeDto.Service {
     keycloakUserSyncService.syncUserOnDelete(email);
     return result;
   }
-
+//regular expression
   private static void applyCreateAuditToPayloadAndUser(EmployeeDto payload) {
     AuditPayloadHelper.applyCreateAudit(payload);
     AuditPayloadHelper.applyCreateAudit(payload.getUser());
@@ -58,7 +58,7 @@ public class EmployeeService extends EmployeeDto.Service {
   private static String getUserEmailFromEmployeeResponse(EmployeeResponseDto res) {
     if (res == null || res.getData() == null || res.getData().getUser() == null) {
       return null;
-    }
+     }
     return res.getData().getUser().getEmail();
   }
 }

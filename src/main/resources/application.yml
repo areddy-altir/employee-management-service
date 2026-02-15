@@ -8,14 +8,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
     show-sql: true
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+          issuer-uri: ${keycloak.user.server-url}/realms/${keycloak.user.realm}
 
 
 fn:
@@ -26,7 +26,11 @@ fn:
 
 # Keycloak
 keycloak:
-  auth-server-url: http://localhost:8180
-  realm: employee-management
-  client-id: employee-management-service
-  client-secret: Dlh1NajE90pEBIwpI0nuhY9ZsOvlnGgq
+  user:
+    server-url: http://localhost:8180
+    realm: employee-management
+  admin:
+    server-url: http://localhost:8180
+    realm: employee-management
+    client-id: employee-management-service
+    client-secret: Dlh1NajE90pEBIwpI0nuhY9ZsOvlnGgq
