@@ -33,3 +33,4 @@ public final class AuditHelper {
     return preferredUsername != null ? preferredUsername : "system";
   }
 }
+//.filter(auth -> auth.isAuthenticated())

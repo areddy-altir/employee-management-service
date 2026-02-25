@@ -3,6 +3,7 @@ package com.example.employeemanagement.exception;
 /**
  * Exception for invalid request. Results in 400. Message is sent in the response.
  */
+//mising or invalid input
 public class BadRequestException extends ServiceException {
 
   public BadRequestException(ResponseCode responseCode) {

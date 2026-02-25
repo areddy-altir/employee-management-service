@@ -5,11 +5,29 @@ import com.example.employeemanagement.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * What it does: Keeps application users (Employee.user) in sync with Keycloak users.
+ *
+ * <p>When an employee is created/updated/deleted, this service creates/updates/deletes the user in Keycloak.
+ * It does not call Keycloak directly; it delegates to {@link KeycloakAdminClient}.
+ *
+ * <p>What it accepts:
+ * <ul>
+ *   <li>{@link UserDto} on create/update</li>
+ *   <li>email (String) on delete</li>
+ * </ul>
+ *
+ * <p>What it returns: void (side-effect sync).
+ */
 @Service
 @RequiredArgsConstructor
 public class KeycloakUserSyncService {
 
   private final KeycloakAdminClient keycloakAdminClient;
+
+  private static boolean hasValidEmail(UserDto user) {
+    return user != null && !StringUtils.isBlank(user.getEmail());
+  }
 
   /**
    * Syncs user to Keycloak on employee create: creates user only (not password).
@@ -19,7 +37,10 @@ public class KeycloakUserSyncService {
     if (!hasValidEmail(user)) {
       return;
     }
-    keycloakAdminClient.createUserInKeycloak(user.getEmail(), user.getName());
+    keycloakAdminClient.createUserInKeycloak(
+        user.getEmail(),
+        user.getFirstname(),
+        user.getLastname());
   }
 
   /**
@@ -29,7 +50,10 @@ public class KeycloakUserSyncService {
     if (!hasValidEmail(user)) {
       return;
     }
-    keycloakAdminClient.updateUserInKeycloak(user.getEmail(), user.getName());
+    keycloakAdminClient.updateUserInKeycloak(
+        user.getEmail(),
+        user.getFirstname(),
+        user.getLastname());
   }
 
   /**
@@ -40,9 +64,5 @@ public class KeycloakUserSyncService {
       return;
     }
     keycloakAdminClient.deleteUserInKeycloak(email);
-  }
-
-  private static boolean hasValidEmail(UserDto user) {
-    return user != null && !StringUtils.isBlank(user.getEmail());
   }
 }

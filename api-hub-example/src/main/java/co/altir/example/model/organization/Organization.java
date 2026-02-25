@@ -1,5 +1,6 @@
 package co.altir.example.model.organization;
 
+import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEmbeddable;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEntity;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import co.altir.example.model.common.Address;
@@ -16,10 +17,7 @@ import lombok.experimental.Accessors;
 public class Organization extends BaseAuditFields {
 
   private UUID id;
-
   @DslRequired() private String name;
-
   @DslRequired() private Address address;
-
   private List<Employee> employees;
 }

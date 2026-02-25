@@ -12,14 +12,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class BaseAuditFields {
-
-  @DslCreatedDate private OffsetDateTime createdOn;
-
-  @DslLastModifiedDate private OffsetDateTime updatedOn;
-
-  @DslReadOnly private String createdBy;
-
-  @DslReadOnly private String updatedBy;
-
-  private Boolean active;
+    @DslCreatedDate private OffsetDateTime createdOn;
+    @DslLastModifiedDate private OffsetDateTime updatedOn;
+    @DslReadOnly private String createdBy;
+    @DslReadOnly private String updatedBy;
+    private Boolean active;
 }

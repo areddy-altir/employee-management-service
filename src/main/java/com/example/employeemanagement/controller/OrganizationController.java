@@ -1,10 +1,11 @@
 package com.example.employeemanagement.controller;
 
-
+import co.altir.dbmanagement.dataaccess.filter.AbstractFilterDto;
 import com.example.employeemanagement.models.dto.*;
 import com.example.employeemanagement.service.OrganizationService;
 import com.example.employeemanagement.utils.OrganizationApi;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,12 @@ import java.util.UUID;
 public class OrganizationController implements OrganizationApi {
 
     private final OrganizationService organizationService;
+
+    @Override
+    public ResponseEntity<OrganizationArrayResponseDto> findOrganization(AbstractFilterDto filter, Pageable pageable) {
+        return ResponseEntity.ok(organizationService.findOrganization(filter, pageable));
+    }
+
     @Override
     public ResponseEntity<OrganizationResponseDto> findByIdOrganization(UUID id) {
         return ResponseEntity.ok(organizationService.findByIdOrganization(id));

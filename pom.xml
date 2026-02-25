@@ -48,9 +48,7 @@
         <spring.boot.version>3.2.2</spring.boot.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <co.altir.db.generate.input-spec>
-
             ${project.basedir}/api-hub-example/swagger/organization/api.yaml
-
         </co.altir.db.generate.input-spec>
         <co.altir.db.generate.model-package>
             com.example.employeemanagement
@@ -119,6 +117,12 @@
             <version>25.0.5</version>
         </dependency>
 
+        <!-- SpringDoc for generated API (ParameterObject on Pageable) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
 
         <dependency>
             <groupId>co.altir</groupId>

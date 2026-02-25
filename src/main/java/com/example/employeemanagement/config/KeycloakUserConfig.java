@@ -5,7 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * User-side Keycloak settings for OIDC (issuer-uri, token endpoints, etc).
+ * What it does: Reads user-side Keycloak configuration used for authentication/JWT validation.
+ *
+ * <p>What it accepts: configuration values under `keycloak.user.*` in `application.yml`
+ * (e.g. server-url, realm).
+ *
+ * <p>What it returns: an immutable {@code KeycloakUserConfig} containing serverUrl + realm.
+ *
+ * <p>Used for: issuer-uri / realm information for JWT validation.
  *
  * <p>This is not used for admin API calls; see {@link KeycloakAdminConfig}.
  */
