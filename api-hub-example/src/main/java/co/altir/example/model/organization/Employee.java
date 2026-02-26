@@ -15,6 +15,10 @@ import lombok.experimental.Accessors;
 public class Employee extends BaseAuditFields {
 
   private UUID id;
+
   @DslRequired() private Organization organization;
+
   @DslOneToOne @DslRequired() private User user;
+
+  private Manager manager;
 }
