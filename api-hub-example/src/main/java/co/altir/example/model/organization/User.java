@@ -15,15 +15,17 @@ import lombok.experimental.Accessors;
 @DslJpaEntity("users")
 public class User extends BaseAuditFields {
 
-    private UUID id;
+  private UUID id;
 
-    @DslRequired() private String name;
+  @DslRequired() private String firstname;
 
-    @Column(unique = true)
-    @DslRequired()
-    private String email;
+  @DslRequired() private String lastname;
 
-    @DslRequired() private String phone;
+  @Column(unique = true)
+  @DslRequired()
+  private String email;
 
-    @DslRequired() private Address address;
+  @DslRequired() private String phone;
+
+  @DslRequired() private Address address;
 }
