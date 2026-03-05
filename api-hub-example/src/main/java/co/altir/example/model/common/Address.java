@@ -5,21 +5,16 @@ import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequire
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-// Source cell: Common Fragments (common)::A9
+// Source cell: Common Fragments (common)::A10
 @Accessors(chain = true)
 @Data
 @DslJpaEmbeddable
 public class Address {
 
   @DslRequired() private String line1;
-
   private String line2;
-
   @DslRequired() private String city;
-
   @DslRequired() private String state;
-
   @DslRequired() private String zip;
-
   @DslRequired() private String country;
 }

@@ -3,6 +3,7 @@ package com.example.employeemanagement.exception;
 /**
  * Exception for business/DB/IO or other internal failure. Results in 500.
  */
+//Business logic wrong
 public class BusinessException extends ServiceException {
 
   public BusinessException(ResponseCode responseCode) {

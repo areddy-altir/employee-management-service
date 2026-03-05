@@ -50,62 +50,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
   }
 
-  @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
-    log.error("User is unauthorized. Reason: {}", ex.getMessage());
-    return ApiResponses.withMsgAndErrorCode(
-        HttpStatus.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getValue(), ErrorCode.UNAUTHORIZED);
-  }
-
-  @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex,
-      HttpHeaders headers,
-      HttpStatusCode status,
-      WebRequest request) {
-    log.error("MethodArgumentNotValidException occurred.", ex);
-    return ApiResponses.badRequestWithMsgAndErrorsAsObject(null, parseErrors(ex));
-  }
-
-  @Override
-  protected ResponseEntity<Object> handleExceptionInternal(
-      Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-    if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
-      request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, ex, WebRequest.SCOPE_REQUEST);
-    }
-    return ApiResponses.withMsgErrorsAndHeadersAsObject(status, ex.getMessage(), null, headers);
-  }
-
-  @ExceptionHandler(BadRequestException.class)
-  public Object handleBadRequest(BadRequestException ex) {
-    log.error("Bad Request exception. msg:{}", ex.getMessage());
-    return ApiResponses.withMsgAndErrorCode(
-        HttpStatus.BAD_REQUEST, ex.getMessage(), ex.getResponseCode());
-  }
-
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public Object handleNotFound(ResourceNotFoundException ex) {
-    log.error("Resource not found. msg:{}", ex.getMessage());
-    return ApiResponses.withMsgAndErrorCode(
-        HttpStatus.NOT_FOUND, ex.getMessage(), ex.getResponseCode());
-  }
-
-  @ExceptionHandler(UnprocessableEntityException.class)
-  public Object handleUnprocessableEntity(UnprocessableEntityException ex) {
-    log.error("Unprocessable entity. msg:{}", ex.getMessage());
-    return ApiResponses.withMsgAndErrorCode(
-        HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), ex.getResponseCode());
-  }
-
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
-    Map<String, Object> map = new HashMap<>();
-    for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
-      addToMap(map, v.getPropertyPath().toString(), v.getMessage());
-    }
-    return ApiResponses.withMsgAndErrorsAsObject(HttpStatus.BAD_REQUEST, null, map);
-  }
-
   private Map<String, Object> parseErrors(BindException ex) {
     BindingResult result = ex.getBindingResult();
     if (result.getAllErrors().isEmpty()) {
@@ -125,6 +69,65 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return errorMap;
   }
 
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
+    log.error("User is unauthorized. Reason: {}", ex.getMessage());
+    return ApiResponses.withMsgAndErrorCode(
+        HttpStatus.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getValue(), ErrorCode.UNAUTHORIZED);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(
+      MethodArgumentNotValidException ex,
+      HttpHeaders headers,
+      HttpStatusCode status,
+      WebRequest request) {
+    log.error("MethodArgumentNotValidException occurred.", ex);
+    return ApiResponses.badRequestWithMsgErrorCodeAndErrors(
+        "Validation failed", ErrorCode.EMP_400, parseErrors(ex));
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleExceptionInternal(
+      Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
+      request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, ex, WebRequest.SCOPE_REQUEST);
+    }
+    return ApiResponses.withMsgErrorsAndHeadersAsObject(status, ex.getMessage(), null, headers);
+  }
+//validation
+  @ExceptionHandler(BadRequestException.class)
+  public Object handleBadRequest(BadRequestException ex) {
+    log.error("Bad Request exception. msg:{}", ex.getMessage());
+    return ApiResponses.withMsgAndErrorCode(
+        HttpStatus.BAD_REQUEST, ex.getMessage(), ex.getResponseCode());
+  }
+// any misisng resource like employyee not found
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public Object handleNotFound(ResourceNotFoundException ex) {
+    log.error("Resource not found. msg:{}", ex.getMessage());
+    return ApiResponses.withMsgAndErrorCode(
+        HttpStatus.NOT_FOUND, ex.getMessage(), ex.getResponseCode());
+  }
+
+//business logic fails but request is syntactically valid, u cant directly deleted employee cause he is linked to organization
+  @ExceptionHandler(UnprocessableEntityException.class)
+  public Object handleUnprocessableEntity(UnprocessableEntityException ex) {
+    log.error("Unprocessable entity. msg:{}", ex.getMessage());
+    return ApiResponses.withMsgAndErrorCode(
+        HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), ex.getResponseCode());
+  }
+//Request param / path variable validation fails
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+    Map<String, Object> map = new HashMap<>();
+    for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
+      addToMap(map, v.getPropertyPath().toString(), v.getMessage());
+    }
+    return ApiResponses.badRequestWithMsgErrorCodeAndErrors(
+        "Validation failed", ErrorCode.EMP_400, map);
+  }
+// token stealing
   @ExceptionHandler(ForbiddenException.class)
   public Object handleForbidden(ForbiddenException ex) {
     log.error("Forbidden exception. msg:{}", ex.getMessage());
@@ -141,9 +144,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponseDto> handleUnknown(Exception ex) {
     log.error("Exception occurred.", ex);
-    return ApiResponses.serverErrorWithMsg(ex.getMessage());
+    String msg = ex.getMessage();
+    if (msg != null && msg.toLowerCase().contains("not found by id")) {
+      return ApiResponses.withMsgAndErrorCode(
+          HttpStatus.NOT_FOUND, msg, ErrorCode.EMP_404);
+    }
+    return ApiResponses.serverErrorWithMsg(msg);
   }
-
+//Handles controlled business-level exceptions
   @ExceptionHandler(BusinessException.class)
   public Object handleBusiness(BusinessException ex) {
     log.error("Business exception. msg:{}", ex.getMessage());
@@ -182,7 +190,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     String message = String.format("Required parameter '%s' is missing", ex.getParameterName());
     Map<String, Object> errors = new HashMap<>();
     errors.put(ex.getParameterName(), message);
-    return ApiResponses.badRequestWithMsgAndErrorsAsObject(message, errors);
+    return ApiResponses.badRequestWithMsgErrorCodeAndErrors(
+        message, ErrorCode.MISSING_REQUEST_PARAMETER, errors);
   }
 
   @Override

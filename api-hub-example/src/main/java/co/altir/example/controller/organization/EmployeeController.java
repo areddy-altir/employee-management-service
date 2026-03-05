@@ -9,6 +9,12 @@ public interface EmployeeController {
 
   @DslCrudEndpoints(
       path = "/employee",
-      methods = {HttpMethod.GET_BY_ID, HttpMethod.POST, HttpMethod.PATCH, HttpMethod.DELETE})
+      methods = {
+        HttpMethod.GET,
+        HttpMethod.GET_BY_ID,
+        HttpMethod.POST,
+        HttpMethod.PATCH,
+        HttpMethod.DELETE
+      })
   Employee crudEndpointsForEmployee();
 }

@@ -15,6 +15,142 @@ tags:
 - name: Employee
 - name: Organization
 paths:
+  /employee:
+    get:
+      tags:
+      - Employee
+      operationId: findEmployee
+      parameters:
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        style: simple
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        style: simple
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 20
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        style: simple
+        schema:
+          type: array
+          items:
+            type: string
+      - name: filter
+        in: query
+        description: Query filter
+        required: false
+        style: simple
+        schema:
+          type: string
+          format: filter
+      responses:
+        "200":
+          description: Successfully retrieved employees
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeArrayResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: GET
+        type: Employee
+      x-spring-paginated: true
+    post:
+      tags:
+      - Employee
+      operationId: createEmployee
+      requestBody:
+        description: Employee request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+        required: true
+      responses:
+        "200":
+          description: Successfully created employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: POST
+        type: Employee
   /employee/{id}:
     get:
       tags:
@@ -179,25 +315,109 @@ paths:
       x-fn-crud-operation:
         op: PATCH
         type: Employee
-  /employee:
-    post:
+  /organization:
+    get:
       tags:
-      - Employee
-      operationId: createEmployee
-      requestBody:
-        description: Employee request
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Employee"
-        required: true
+      - Organization
+      operationId: findOrganization
+      parameters:
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        style: simple
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        style: simple
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 20
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        style: simple
+        schema:
+          type: array
+          items:
+            type: string
+      - name: filter
+        in: query
+        description: Query filter
+        required: false
+        style: simple
+        schema:
+          type: string
+          format: filter
       responses:
         "200":
-          description: Successfully created employee
+          description: Successfully retrieved organizations
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EmployeeResponse"
+                $ref: "#/components/schemas/OrganizationArrayResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server side error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-fn-crud-operation:
+        op: GET
+        type: Organization
+      x-spring-paginated: true
+    post:
+      tags:
+      - Organization
+      operationId: createOrganization
+      requestBody:
+        description: Organization request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organization"
+        required: true
+      responses:
+        "200":
+          description: Successfully created organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationResponse"
         "400":
           description: Bad request
           content:
@@ -230,7 +450,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       x-fn-crud-operation:
         op: POST
-        type: Employee
+        type: Organization
   /organization/{id}:
     get:
       tags:
@@ -395,96 +615,6 @@ paths:
       x-fn-crud-operation:
         op: PATCH
         type: Organization
-  /organization:
-    post:
-      tags:
-      - Organization
-      operationId: createOrganization
-      requestBody:
-        description: Organization request
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Organization"
-        required: true
-      responses:
-        "200":
-          description: Successfully created organization
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrganizationResponse"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
-          description: Forbidden request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Server side error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-      x-fn-crud-operation:
-        op: POST
-        type: Organization
-  /internal/organization/db-sync:
-    post:
-      tags:
-      - Organization
-      operationId: syncOrganizationDatabases
-      responses:
-        "201":
-          description: Accepted
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
-          description: Forbidden request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          description: Server side error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     BaseAuditFields:
@@ -493,17 +623,13 @@ components:
         createdOn:
           type: string
           format: date-time
-          x-fn-created-date: true
         updatedOn:
           type: string
           format: date-time
-          x-fn-last-modified-date: true
         createdBy:
           type: string
-          readOnly: true
         updatedBy:
           type: string
-          readOnly: true
         active:
           type: boolean
       description: Common base class with audit fields
@@ -520,6 +646,144 @@ components:
           type: string
         message:
           type: string
+      x-fn-base-dto-type: NO_OP
+    Organization:
+      required:
+      - address
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-fn-id: true
+          x-fn-jpa-property:
+            id-generator:
+              strategy: UUID
+            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
+        name:
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          x-fn-jpa-property:
+            embedded: true
+        employees:
+          type: array
+          items:
+            $ref: "#/components/schemas/Employee"
+          x-fn-jpa-property:
+            ref:
+              one-to-many:
+                fetch: lazy
+                mapped-by: organization
+                cascade:
+                - ALL
+                orphan-removal: true
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
+      x-fn-jpa-entity:
+        name: organizations
+    User:
+      required:
+      - address
+      - email
+      - firstname
+      - lastname
+      - phone
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-fn-id: true
+          x-fn-jpa-property:
+            id-generator:
+              strategy: UUID
+            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          allOf:
+          - $ref: "#/components/schemas/Address"
+          x-fn-jpa-property:
+            embedded: true
+      allOf:
+      - $ref: "#/components/schemas/BaseAuditFields"
+      x-fn-jpa-entity:
+        name: users
+    Address:
+      required:
+      - city
+      - country
+      - line1
+      - state
+      - zip
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        country:
+          type: string
+      x-fn-base-dto-type: NO_OP
+      x-fn-jpa-entity:
+        embeddable: true
+    ArrayResponseBase:
+      type: object
+      properties:
+        totalHits:
+          type: integer
+          format: int32
+          x-fn-total-hits: true
+        totalPages:
+          type: integer
+          format: int32
+          x-fn-total-pages: true
+        hasMore:
+          type: boolean
+          x-fn-has-more: true
+        message:
+          type: string
+      discriminator:
+        propertyName: type
+      x-fn-base-dto-type: NO_OP
+      x-fn-response-wrapper: data
+    ApiResponseBase:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+      discriminator:
+        propertyName: type
+      x-fn-response-wrapper: data
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+        errorFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorField"
+      description: Common error response object
       x-fn-base-dto-type: NO_OP
     BooleanReadByIdResponse:
       allOf:
@@ -569,106 +833,22 @@ components:
                 - REFRESH
                 orphan-removal: false
               join-column:
-                name: user_id
                 nullable: false
       allOf:
       - $ref: "#/components/schemas/BaseAuditFields"
       x-fn-jpa-entity:
         name: employees
-    Organization:
-      required:
-      - address
-      - name
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          x-fn-id: true
-          x-fn-jpa-property:
-            id-generator:
-              strategy: UUID
-            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
-        name:
-          type: string
-        address:
-          allOf:
-          - $ref: "#/components/schemas/Address"
-          x-fn-jpa-property:
-            embedded: true
-        employees:
-          type: array
-          items:
-            $ref: "#/components/schemas/Employee"
-          x-fn-jpa-property:
-            ref:
-              one-to-many:
-                fetch: lazy
-                mapped-by: organization
-                cascade:
-                - ALL
-                orphan-removal: true
+    EmployeeArrayResponse:
       allOf:
-      - $ref: "#/components/schemas/BaseAuditFields"
-      x-fn-jpa-entity:
-        name: organizations
-    User:
-      required:
-      - address
-      - email
-      - name
-      - phone
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          x-fn-id: true
-          x-fn-jpa-property:
-            id-generator:
-              strategy: UUID
-            custom-annotations: '@JdbcTypeCode(SqlTypes.VARCHAR)'
-        name:
-          type: string
-        email:
-          type: string
-          x-fn-jpa-property:
-            custom-annotations: '@jakarta.persistence.Column(unique = true)'
-        phone:
-          type: string
-        address:
-          allOf:
-          - $ref: "#/components/schemas/Address"
-          x-fn-jpa-property:
-            embedded: true
-      allOf:
-      - $ref: "#/components/schemas/BaseAuditFields"
-      x-fn-jpa-entity:
-        name: users
-    Address:
-      required:
-      - city
-      - country
-      - line1
-      - state
-      - zip
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-        country:
-          type: string
-      x-fn-base-dto-type: NO_OP
-      x-fn-jpa-entity:
-        embeddable: true
+      - $ref: "#/components/schemas/ArrayResponseBase"
+      - type: object
+        properties:
+          data:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: "#/components/schemas/Employee"
+      x-fn-wrapper-field: data
     OrganizationResponse:
       allOf:
       - $ref: "#/components/schemas/ApiResponseBase"
@@ -676,6 +856,17 @@ components:
         properties:
           data:
             $ref: "#/components/schemas/Organization"
+      x-fn-wrapper-field: data
+    OrganizationArrayResponse:
+      allOf:
+      - $ref: "#/components/schemas/ArrayResponseBase"
+      - type: object
+        properties:
+          data:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: "#/components/schemas/Organization"
       x-fn-wrapper-field: data
     EmployeeResponse:
       allOf:
@@ -685,29 +876,6 @@ components:
           data:
             $ref: "#/components/schemas/Employee"
       x-fn-wrapper-field: data
-    ApiResponseBase:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-      discriminator:
-        propertyName: type
-      x-fn-response-wrapper: data
-    ErrorResponse:
-      type: object
-      properties:
-        errorCode:
-          type: string
-        message:
-          type: string
-        errorFields:
-          type: array
-          items:
-            $ref: "#/components/schemas/ErrorField"
-      description: Common error response object
-      x-fn-base-dto-type: NO_OP
   securitySchemes:
     BearerAuth:
       type: http

@@ -15,10 +15,6 @@ import lombok.experimental.Accessors;
 public class Employee extends BaseAuditFields {
 
   private UUID id;
-
   @DslRequired() private Organization organization;
-
-  @DslOneToOne(joinColumnName = "user_id")
-  @DslRequired()
-  private User user;
+  @DslOneToOne @DslRequired() private User user;
 }

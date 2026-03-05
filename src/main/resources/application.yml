@@ -6,27 +6,33 @@ spring:
     username: root
     password: altir
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
   jpa:
     hibernate:
       ddl-auto: update
-
     show-sql: true
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+          issuer-uri: ${keycloak.user.server-url}/realms/${keycloak.user.realm}
 
-
+    # Keycloak
+keycloak:
+  user:
+     server-url: http://localhost:8180
+     realm: employee-management
+  admin:
+        server-url: http://localhost:8180
+        realm: employee-management
+        client-id: employee-management-service
+        client-secret: Dlh1NajE90pEBIwpI0nuhY9ZsOvlnGgq
 fn:
   data:
     access:
       mapping:
         createToOneReferencesIfRequired: true
 
-# Keycloak
-keycloak:
-  auth-server-url: http://localhost:8180
-  realm: employee-management
-  client-id: employee-management-service
-  client-secret: Dlh1NajE90pEBIwpI0nuhY9ZsOvlnGgq
+
