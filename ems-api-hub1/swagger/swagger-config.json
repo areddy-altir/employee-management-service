@@ -1,0 +1,6 @@
+{
+  "urls" : [ {
+    "url" : "../swagger/organization/api.yaml",
+    "name" : "organization"
+  } ]
+}
