@@ -48,7 +48,7 @@
         <spring.boot.version>3.2.2</spring.boot.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <co.altir.db.generate.input-spec>
-            ${project.basedir}/api-hub-example/swagger/organization/api.yaml
+            ${project.basedir}/ems-api-hub/swagger/organization/api.yaml
         </co.altir.db.generate.input-spec>
         <co.altir.db.generate.model-package>
             co.altir.ems

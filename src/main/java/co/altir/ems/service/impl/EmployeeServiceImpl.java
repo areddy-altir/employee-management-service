@@ -2,7 +2,6 @@ package co.altir.ems.service.impl;
 
 import co.altir.dbmanagement.dataaccess.Projection;
 import co.altir.dbmanagement.dataaccess.filter.AbstractFilterDto;
-import co.altir.ems.integration.keycloak.KeycloakAdminClient;
 import co.altir.ems.integration.keycloak.KeycloakUserSyncService;
 import co.altir.ems.models.dto.BooleanReadByIdResponseDto;
 import co.altir.ems.models.dto.EmployeeArrayResponseDto;
@@ -11,8 +10,6 @@ import co.altir.ems.models.dto.EmployeeHierarchyNodeDto;
 import co.altir.ems.models.dto.EmployeeHierarchyNodeResponseDto;
 import co.altir.ems.models.dto.EmployeeRelationDto;
 import co.altir.ems.models.dto.EmployeeResponseDto;
-import co.altir.ems.models.dto.EmployeeRole;
-import co.altir.ems.models.dto.UpdateEmployeeRoleRequestDto;
 import co.altir.ems.security.AuthorizationService;
 import co.altir.ems.service.EmployeeRelationService;
 import co.altir.ems.service.EmployeeService;
@@ -41,7 +38,6 @@ public class EmployeeServiceImpl extends EmployeeDto.Service implements Employee
   private static final int MAX_PAGE_SIZE = 100;
 
   private final KeycloakUserSyncService keycloakUserSyncService;
-  private final KeycloakAdminClient keycloakAdminClient;
   private final AuthorizationService authorizationService;
   private final SecurityUtil securityUtil;
   private final EmployeeRelationService employeeRelationService;
@@ -131,10 +127,6 @@ public class EmployeeServiceImpl extends EmployeeDto.Service implements Employee
     keycloakUserSyncService.syncUserOnCreate(payload.getUser());
     applyCreateAuditToPayloadAndUser(payload);
     EmployeeResponseDto created = super.createEmployees(payload);
-    String email = getUserEmailFromEmployeeResponse(created);
-    if (email != null && !email.isBlank()) {
-      keycloakAdminClient.addRealmRoleToUserByEmail(email, "EMPLOYEE");
-    }
     return created;
   }
 
@@ -160,33 +152,10 @@ public class EmployeeServiceImpl extends EmployeeDto.Service implements Employee
   }
 
   @Override
-  public EmployeeResponseDto updateEmployeeRole(UUID employeeId, UpdateEmployeeRoleRequestDto payload) {
+  public EmployeeResponseDto updateEmployeeRole(UUID employeeId) {
     authorizationService.requireAdmin();
-
-    EmployeeResponseDto existingRes =
-        super.findByIdEmployees(employeeId, Projection.fields("id", "role", "user.email"));
-    EmployeeDto existing = existingRes != null ? existingRes.getData() : null;
-    if (existing == null || existing.getUser() == null) {
-      throw new IllegalArgumentException("Employee not found");
-    }
-
-    EmployeeRole oldRole = existing.getRole();
-    EmployeeRole newRole = payload != null ? payload.getRole() : null;
-    if (newRole == null) {
-      throw new IllegalArgumentException("role is required");
-    }
-
-    EmployeeResponseDto updated = super.patchEmployees(employeeId, new EmployeeDto().role(newRole));
-
-    String email = existing.getUser().getEmail();
-    if (email != null && !email.isBlank()) {
-      if (oldRole != null) {
-        keycloakAdminClient.removeRealmRoleFromUserByEmail(email, oldRole.name());
-      }
-      keycloakAdminClient.addRealmRoleToUserByEmail(email, newRole.name());
-    }
-
-    return updated;
+    // PATCH /employees/{employeeId}/role has no request body in spec; return current employee
+    return super.findByIdEmployees(employeeId, (Projection) null);
   }
 
   @Override

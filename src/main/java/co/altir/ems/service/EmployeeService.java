@@ -6,7 +6,6 @@ import co.altir.ems.models.dto.EmployeeArrayResponseDto;
 import co.altir.ems.models.dto.EmployeeDto;
 import co.altir.ems.models.dto.EmployeeHierarchyNodeResponseDto;
 import co.altir.ems.models.dto.EmployeeResponseDto;
-import co.altir.ems.models.dto.UpdateEmployeeRoleRequestDto;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 
@@ -22,7 +21,7 @@ public interface EmployeeService {
 
   BooleanReadByIdResponseDto deleteEmployees(UUID id);
 
-  EmployeeResponseDto updateEmployeeRole(UUID employeeId, UpdateEmployeeRoleRequestDto payload);
+  EmployeeResponseDto updateEmployeeRole(UUID employeeId);
 
   EmployeeArrayResponseDto getSubordinates(UUID employeeId);
 
