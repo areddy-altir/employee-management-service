@@ -1,11 +1,11 @@
-package co.altir.ems_services.controller;
+package co.altir.ems.controller;
 
-import co.altir.ems_services.models.dto.BooleanReadByIdResponseDto;
-import co.altir.ems_services.models.dto.EmployeeRelationDto;
-import co.altir.ems_services.models.dto.EmployeeRelationResponseDto;
-import co.altir.ems_services.security.AuthorizationService;
-import co.altir.ems_services.service.EmployeeRelationService;
-import co.altir.ems_services.utils.EmployeeRelationApi;
+import co.altir.ems.models.dto.BooleanReadByIdResponseDto;
+import co.altir.ems.models.dto.EmployeeRelationDto;
+import co.altir.ems.models.dto.EmployeeRelationResponseDto;
+import co.altir.ems.security.AuthorizationService;
+import co.altir.ems.service.EmployeeRelationService;
+import co.altir.ems.utils.EmployeeRelationApi;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

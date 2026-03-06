@@ -1,12 +1,12 @@
-package co.altir.ems_services.service.impl;
+package co.altir.ems.service.impl;
 
 import co.altir.dbmanagement.dataaccess.filter.AbstractFilterDto;
-import co.altir.ems_services.models.dto.BooleanReadByIdResponseDto;
-import co.altir.ems_services.models.dto.OrganizationArrayResponseDto;
-import co.altir.ems_services.models.dto.OrganizationDto;
-import co.altir.ems_services.models.dto.OrganizationResponseDto;
-import co.altir.ems_services.service.OrganizationService;
-import co.altir.ems_services.util.AuditPayloadHelper;
+import co.altir.ems.models.dto.BooleanReadByIdResponseDto;
+import co.altir.ems.models.dto.OrganizationArrayResponseDto;
+import co.altir.ems.models.dto.OrganizationDto;
+import co.altir.ems.models.dto.OrganizationResponseDto;
+import co.altir.ems.service.OrganizationService;
+import co.altir.ems.util.AuditPayloadHelper;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

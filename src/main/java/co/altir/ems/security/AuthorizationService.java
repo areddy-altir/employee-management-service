@@ -1,6 +1,6 @@
-package co.altir.ems_services.security;
+package co.altir.ems.security;
 
-import co.altir.ems_services.util.SecurityUtil;
+import co.altir.ems.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;

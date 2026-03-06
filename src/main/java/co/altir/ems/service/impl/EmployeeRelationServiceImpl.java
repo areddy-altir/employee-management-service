@@ -1,10 +1,10 @@
-package co.altir.ems_services.service.impl;
+package co.altir.ems.service.impl;
 
-import co.altir.ems_services.models.dto.BooleanReadByIdResponseDto;
-import co.altir.ems_services.models.dto.EmployeeRelationDto;
-import co.altir.ems_services.models.dto.EmployeeRelationResponseDto;
-import co.altir.ems_services.service.EmployeeRelationService;
-import co.altir.ems_services.util.AuditPayloadHelper;
+import co.altir.ems.models.dto.BooleanReadByIdResponseDto;
+import co.altir.ems.models.dto.EmployeeRelationDto;
+import co.altir.ems.models.dto.EmployeeRelationResponseDto;
+import co.altir.ems.service.EmployeeRelationService;
+import co.altir.ems.util.AuditPayloadHelper;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

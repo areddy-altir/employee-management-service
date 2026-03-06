@@ -1,4 +1,4 @@
-package co.altir.ems_services.util;
+package co.altir.ems.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
