@@ -1,0 +1,25 @@
+version: "3.3"
+services:
+  swagger-ui-logixflow:
+    image: swaggerapi/swagger-ui:v4.15.5
+    container_name: swagger-ui-logixflow
+    ports:
+    - 8082:8080
+    volumes:
+    - ./swagger:/usr/share/nginx/html/swagger
+    environment:
+      CONFIG_URL: ./swagger/swagger-config.json
+      VALIDATOR_URL: 127.0.0.1
+  proxy:
+    image: caddy:2.6
+    volumes:
+    - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+    - 8080:80
+    depends_on:
+    - prism_organization
+  prism_organization:
+    image: stoplight/prism:4
+    volumes:
+    - ./swagger/:/usr/src/prism/packages/cli/apis/
+    command: mock -p 4010 --host 0.0.0.0 apis/organization/api.yaml

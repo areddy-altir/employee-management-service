@@ -1,6 +1,5 @@
 package co.altir.example.model.organization;
 
-import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEmbeddable;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslJpaEntity;
 import co.altir.dbmanagement.dataaccess.openapidsl.schema.annotations.DslRequired;
 import co.altir.example.model.common.Address;
