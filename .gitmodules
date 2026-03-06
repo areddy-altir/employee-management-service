@@ -1,3 +1,4 @@
 [submodule "ems-api-hub"]
 	path = ems-api-hub
 	url = https://github.com/areddy-altir/ems-api-hub.git
+	branch = submodule/ems-api-hub
