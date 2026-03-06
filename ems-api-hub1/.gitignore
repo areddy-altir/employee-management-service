@@ -1,8 +1,0 @@
-/.idea/
-/target/
-*.iml
-.idea/
-*.pem
-*.tar
-*.sh
-**/.DS_Store
