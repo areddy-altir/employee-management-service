@@ -3,17 +3,22 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     hibernate:
       ddl-auto: create-drop
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${keycloak.user.server-url}/realms/${keycloak.user.realm}
 
-# Keycloak (test values - Keycloak not required for context load)
+  # Disable Security + ES autoconfiguration
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+
+# Keycloak
 keycloak:
+  enabled: false
   user:
     server-url: http://localhost:8180
     realm: employee-management
@@ -22,3 +27,6 @@ keycloak:
     realm: employee-management
     client-id: employee-management-service
     client-secret: test-secret
+
+elasticsearch:
+  uris: ""
